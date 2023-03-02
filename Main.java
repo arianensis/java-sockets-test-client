@@ -36,7 +36,7 @@ public class Main {
         }
         System.out.println("CONNECTED!");
         try {
-            in = new DataInputStream(socket.getInputStream())
+            in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
             while (true) {
                 System.out.print("Enter number in range [0-255] to send, or a negative to end: ");
@@ -55,8 +55,8 @@ public class Main {
                         System.out.println("RECEIVED: "+in.readByte());
                     }
                 } catch (Exception e) {
-                    System.out.println("ERROR: Input must be an integer lower than 256");
-                    continue;
+                    System.out.println("ERROR: Server has been disconnected");
+                    break;
                 }
             }
     
