@@ -1,5 +1,5 @@
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Scanner;
@@ -8,8 +8,8 @@ public class Main {
     public static void main(String[] args) {
         Scanner readConsole = new Scanner(System.in);
         Socket socket;
-        DataOutputStream out;
-        DataInputStream in;
+        ObjectOutputStream out;
+        ObjectInputStream in;
         while(true) {
             System.out.print("Enter Server Address: ");
             String serverAddress = readConsole.nextLine();
@@ -36,23 +36,20 @@ public class Main {
         }
         System.out.println("CONNECTED!");
         try {
-            in = new DataInputStream(socket.getInputStream());
-            out = new DataOutputStream(socket.getOutputStream());
+            System.out.println(socket);
+            out = new ObjectOutputStream(socket.getOutputStream());
+            in = new ObjectInputStream(socket.getInputStream());
             while (true) {
-                System.out.print("Enter number in range [0-255] to send, or a negative to end: ");
+                System.out.print("Write a message to send or /END to close connection: ");
                 String response = readConsole.nextLine();
-                int message = 256;
+                Message message = new Message(response);
                 try {
-                    message = Integer.parseInt(response);
-                    if (message > 255) {
-                        System.out.println("ERROR: Input must be an integer lower than 256");   
-                        continue;                 
-                    } else if (message < 0) {
+                    if (message.toString().equals("/END")) {
                         break;
                     } else {
                         System.out.println("SENDING: "+message);
-                        out.writeByte(message);
-                        System.out.println("RECEIVED: "+in.readByte());
+                        out.writeObject(message);
+                        System.out.println("RECEIVED: "+in.readObject());
                     }
                 } catch (Exception e) {
                     System.out.println("ERROR: Server has been disconnected");
@@ -67,6 +64,7 @@ public class Main {
             }
             readConsole.close();
         } catch (IOException e) {
+            System.out.println("a");
         }        
     }
 }
